@@ -1,0 +1,32 @@
+version: '3.4'
+services:
+  liferay:
+    image: "liferay:portlal-1.0"
+    depends_on:
+      - mysql_liferay
+    volumes:
+      - "./configs/docker/osgi/modules:/opt/liferay/deploy"
+      - "./configs/dev/portal-ext.properties:/opt/liferay/portal-ext.properties"
+    ports:
+      - "8080:8080"
+      - "9000:9000"
+      - "8000:8000"
+      - "11311:11311"
+    environment:
+      - "LIFERAY_HOME=/opt/liferay"
+      - "CATALINA_HOME=/opt/tomcat"
+      - "JAVA_OPTS=-Xdebug -Xrunjdwp:server=y,transport=dt_socket,address=8000,suspend=n"
+    networks:
+            - lfrnet
+  mysql_liferay:
+    container_name: "mysql_dev"
+    image: "mysql_liferay:portal-1.0"
+    ports:
+      - "3306:3306"
+    environment:
+      - "MYSQL_ROOT_PASSWORD=root"
+    networks:
+      - lfrnet
+
+networks:
+  lfrnet:
